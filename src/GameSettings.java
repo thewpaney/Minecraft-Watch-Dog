@@ -70,7 +70,9 @@ public class GameSettings
     public int guiScale;
     public int particles;
     public String field_44018_Q;
-
+    public long milliPlayedToday;
+    public long milliOfDayLastPlayed;
+    
     public GameSettings(Minecraft minecraft, File file)
     {
         musicVolume = 1.0F;
@@ -118,12 +120,14 @@ public class GameSettings
         gammaSetting = 0.0F;
         guiScale = 0;
         particles = 0;
+	milliPlayedToday = 0L;
+	milliOfDayLastPlayed = 0L;
         field_44018_Q = "en_US";
         mc = minecraft;
         optionsFile = new File(file, "options.txt");
         loadOptions();
     }
-
+    //I think this is just used for if there isnt a file, like if it's online or something, so i'm not putting them here
     public GameSettings()
     {
         musicVolume = 1.0F;
@@ -467,6 +471,14 @@ public class GameSettings
                 try
                 {
                     String as[] = s.split(":");
+		    if (as[0].equals("timePlayed"))
+			{
+			    milliPlayedToday = parseLong(as[1]);
+			}
+		    if (as[0].equals("dayPlayed"))
+			{
+			    milliOfDayLastPlayed = parseLong(as[1]);
+			}
                     if (as[0].equals("music"))
                     {
                         musicVolume = parseFloat(as[1]);
@@ -547,6 +559,7 @@ public class GameSettings
                     {
                         field_44018_Q = as[1];
                     }
+
                     int i = 0;
                     while (i < keyBindings.length)
                     {
@@ -573,6 +586,11 @@ public class GameSettings
         }
     }
 
+    private long parseLong(String s)
+    {
+	return Long.parseLong(s);
+    }
+
     private float parseFloat(String s)
     {
         if (s.equals("true"))
@@ -594,6 +612,8 @@ public class GameSettings
         try
         {
             PrintWriter printwriter = new PrintWriter(new FileWriter(optionsFile));
+            printwriter.println((new StringBuilder()).append("timePlayed:").append(milliPlayedToday).toString());
+            printwriter.println((new StringBuilder()).append("dayPlayed:").append(milliOfDayLastPlayed).toString());	    
             printwriter.println((new StringBuilder()).append("music:").append(musicVolume).toString());
             printwriter.println((new StringBuilder()).append("sound:").append(soundVolume).toString());
             printwriter.println((new StringBuilder()).append("invertYMouse:").append(invertMouse).toString());

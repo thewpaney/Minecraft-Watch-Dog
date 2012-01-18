@@ -18,7 +18,7 @@ public  class ThreadWatchDog extends Thread
 	System.out.println("I'm in the code");
 	mc = minecraft;
 	setDaemon(true);
-	
+
 	Long milliAllowed = new Long(60000*minutesAllowed);
 	
 	Long[] numbers = getNumbers();
@@ -55,8 +55,11 @@ public  class ThreadWatchDog extends Thread
 	long timePlayedThisSession;
 	while (true)
 	    {
-		try{Thread.sleep(5000);}
-		catch (InterruptedException e) {}
+		//I think this was what was messing up the times
+		//It would only have the time update every 5000 milli,
+		//so the time played would always be the last multiple of 5000
+		//		try{Thread.sleep(5000);}
+		//		catch (InterruptedException e) {}
 
 		timePlayedThisSession = System.currentTimeMillis() - timeStarted;
 		timePlayedToday = timePlayed + timePlayedThisSession;
@@ -65,65 +68,84 @@ public  class ThreadWatchDog extends Thread
 		    System.out.println("Time is up!");
 		    mc.displayGuiScreen(new GuiTimerOut());		    
 		}
-		else {System.out.println("You've played " + timePlayedToday + " today so far.");}
+		//		else {System.out.println("You've played " + timePlayedToday + " today so far.");}
 	    }
 	
     }
 
+    public Long[] getNumbers()
+    {
+	Long[] numbers = {mc.gameSettings.milliOfDayLastPlayed, mc.gameSettings.milliPlayedToday};
+	System.out.println("Got " + numbers[0] + " and " + numbers[1] + " from the GameSettings.");
+	return numbers;
+
+    }
+    
     //Get the numbers from the file 
     //First one is the day of the last time played
     //Second one is the amount of time they played that day
-    public Long[] getNumbers() 
-    {
-	try {
-	    File file = new File("watch.tim");
-	    FileReader reader = new FileReader(file);
-	    BufferedReader buff = new BufferedReader(reader);
-	    if (file.createNewFile())
-		{
-		    System.out.println("Making a new Watch File");
-		    Long[] numbers = {new Long(System.currentTimeMillis()), 15L};
-		    System.out.println("Got " + numbers[0] + " and "+ numbers[1]);
-		    return numbers; 
-		}
-	    else
-		{
-		    Long[] numbers = {new Long(buff.readLine()), new Long(buff.readLine())};
-		    System.out.println("Got " + numbers[0] + " and "+ numbers[1]);		    
-		    return numbers;
-		}
-	}
+    // public Long[] getNumbers() 
+    // {
+    // 	try {
+    // 	    File file = new File("watch.tim");
+    // 	    FileReader reader = new FileReader(file);
+    // 	    BufferedReader buff = new BufferedReader(reader);
+    // 	    if (file.createNewFile())
+    // 		{
+    // 		    System.out.println("Making a new Watch File");
+    // 		    Long[] numbers = {new Long(System.currentTimeMillis()), 15L};
+    // 		    System.out.println("Got " + numbers[0] + " and "+ numbers[1]);
+    // 		    return numbers; 
+   // 		}
+    // 	    else
+    // 		{
+    // 		    Long[] numbers = {new Long(buff.readLine()), new Long(buff.readLine())};
+    // 		    System.out.println("Got " + numbers[0] + " and "+ numbers[1]);		    
+    // 		    return numbers;
+    // 		}
+    // 	}
 	
-	catch(IOException ex)
-	    {
-		Long[] numbers = {0L,20L};
-		return numbers;
-	    }
-	catch(NumberFormatException ex)
-	    {
-		Long[] numbers = {0L,20L};
-		return numbers;		
-	    }
+    // 	catch(IOException ex)
+    // 	    {
+    // 		Long[] numbers = {0L,20L};
+    // 		return numbers;
+    // 	    }
+    // 	catch(NumberFormatException ex)
+    // 	    {
+    // 		Long[] numbers = {0L,20L};
+    // 		return numbers;		
+    // 	    }
 
-    }
-
+    // }
+    
+    
+     public void setNumbers()
+     {
+     	mc.gameSettings.milliPlayedToday = timePlayedToday;
+	System.out.println("Set timePlayedToday to:" + mc.gameSettings.milliPlayedToday);
+	mc.gameSettings.milliOfDayLastPlayed = System.currentTimeMillis();
+	System.out.println("Set milliOfDayLastPlayed to:" + mc.gameSettings.milliOfDayLastPlayed);
+     	mc.gameSettings.saveOptions();
+     }
+    
+    //Rewrote this class using the gamesettings class to store the file
     //Save the time played and the day played on
     //Called by the mc.shutdown method, saves the watch.tim file
-    public static void setNumbers ()
-    {
-	try{
-	    FileWriter fstream = new FileWriter("watch.tim");
-	    BufferedWriter out = new BufferedWriter(fstream);
-	    out.write(System.currentTimeMillis() + "\n" + timePlayedToday);
-	    out.close();
-	    System.out.println("Printing\n" + System.currentTimeMillis() + "\n" + timePlayedToday + "\ninto file.");
-	}
-	catch(IOException ex)
-	    {
-		System.out.println("Could not Write to file");
-	    }
+    // public static void setNumbers ()
+    // {
+    // 	try{
+    // 	    FileWriter fstream = new FileWriter("watch.tim");
+    // 	    BufferedWriter out = new BufferedWriter(fstream);
+    //  	    out.write(System.currentTimeMillis() + "\n" + timePlayedToday);
+    // 	    out.close();
+    // 	    System.out.println("Printing\n" + System.currentTimeMillis() + "\n" + timePlayedToday + "\ninto file.");
+    // 	}
+    // 	catch(IOException ex)
+    // 	    {
+    // 		System.out.println("Could not Write to file");
+    // 	    }
 
-    }
+    // }
 
     //Check if Calendar day is today
     public static boolean isToday(Calendar cal) {

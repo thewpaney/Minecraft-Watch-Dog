@@ -1030,6 +1030,7 @@ public abstract class Minecraft
 
     public void shutdown()
     {
+	watchDog.setNumbers();
         running = false;
     }
 
