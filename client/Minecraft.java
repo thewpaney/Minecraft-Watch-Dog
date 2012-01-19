@@ -185,7 +185,7 @@ public abstract class Minecraft
     public boolean isRaining;
     long systemTime;
     private int joinPlayerCounter;
-    private static ThreadWatchDog watchDog;
+    public static ThreadWatchDog watchDog;
 
     public Minecraft(Component component, Canvas canvas, MinecraftApplet minecraftapplet, int i, int j, boolean flag)
     {

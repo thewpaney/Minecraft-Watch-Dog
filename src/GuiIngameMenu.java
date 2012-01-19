@@ -79,6 +79,7 @@ public class GuiIngameMenu extends GuiScreen
             drawString(fontRenderer, "Saving level..", 8, height - 16, k << 16 | k << 8 | k);
         }
         drawCenteredString(fontRenderer, "Game menu", width / 2, 40, 0xffffff);
+	drawCenteredString(fontRenderer, "Time Left: " + mc.watchDog.getTimeLeft(), width/5, 40, 0xffffff);
         super.drawScreen(i, j, f);
     }
 }

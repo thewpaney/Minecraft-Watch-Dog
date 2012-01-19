@@ -11,7 +11,7 @@ public  class ThreadWatchDog extends Thread
     private static long timePlayed;
     private static long timeAllotted;
     private static long timePlayedToday;
-    
+    private static long milliAllowed;
     public ThreadWatchDog(Minecraft minecraft, int minutesAllowed) 
     {
 	super("ThreadWatchDog");
@@ -19,7 +19,7 @@ public  class ThreadWatchDog extends Thread
 	mc = minecraft;
 	setDaemon(true);
 
-	Long milliAllowed = new Long(60000*minutesAllowed);
+	milliAllowed = new Long(60000*minutesAllowed);
 	
 	Long[] numbers = getNumbers();
 	//set what the last day played was
@@ -153,6 +153,19 @@ public  class ThreadWatchDog extends Thread
 
     }
 
+    public String getTimeLeft()
+    {
+	
+	int milli = (int) (milliAllowed - timePlayedToday);
+	int seconds = milli / 1000;
+	int minutes = seconds / 60;
+	seconds = seconds % 60;
+	//Add if necessary
+	//	int hours = minutes / 60;
+	//	minutes = minutes % 60;
+	return (new StringBuilder()).append(minutes).append(":").append(seconds).toString();
+    }
+	
     //Check if two Calendar days are the same day
     public static boolean isSameDay(Calendar cal1, Calendar cal2) {
 	//Shouldn't be necessary, but I'll keep it Justin Case
