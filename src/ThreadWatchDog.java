@@ -7,11 +7,11 @@ import java.util.Calendar;
 public  class ThreadWatchDog extends Thread
 {
     protected final Minecraft mc;
-    private static long timeStarted = System.currentTimeMillis();
-    private static long timePlayed;
-    private static long timeAllotted;
-    private static long timePlayedToday;
-    private static long milliAllowed;
+    private  long timeStarted = System.currentTimeMillis();
+    private  long timePlayed;
+    private  long timeAllotted;
+    private  long timePlayedToday;
+    private  long milliAllowed;
     public ThreadWatchDog(Minecraft minecraft, int minutesAllowed) 
     {
 	super("ThreadWatchDog");
@@ -64,9 +64,9 @@ public  class ThreadWatchDog extends Thread
 		timePlayedThisSession = System.currentTimeMillis() - timeStarted;
 		timePlayedToday = timePlayed + timePlayedThisSession;
 		if (timePlayedThisSession > timeAllotted){
-
 		    System.out.println("Time is up!");
-		    mc.displayGuiScreen(new GuiTimerOut());		    
+		    mc.displayGuiScreen(new GuiTimerOut());
+		    this.stop();
 		}
 		//		else {System.out.println("You've played " + timePlayedToday + " today so far.");}
 	    }
@@ -148,7 +148,7 @@ public  class ThreadWatchDog extends Thread
     // }
 
     //Check if Calendar day is today
-    public static boolean isToday(Calendar cal) {
+    public  boolean isToday(Calendar cal) {
         return isSameDay(cal, Calendar.getInstance());
 
     }
@@ -167,7 +167,7 @@ public  class ThreadWatchDog extends Thread
     }
 	
     //Check if two Calendar days are the same day
-    public static boolean isSameDay(Calendar cal1, Calendar cal2) {
+    public  boolean isSameDay(Calendar cal1, Calendar cal2) {
 	//Shouldn't be necessary, but I'll keep it Justin Case
 	//        if (cal1 == null || cal2 == null) {       
 	//            throw new IllegalArgumentException("The dates must not be null");
